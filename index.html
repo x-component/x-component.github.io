@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="x-x.css">
+		<script>
+			var data = {"rows":[
+{"key":["x-x","x-common","utilities used by x-x.io x-components"],"value":1},
+{"key":["x-x","x-configs","simple loading configuration settings depending on an environment variable NODE_ENV like development, test, production"],"value":1},
+{"key":["x-x","x-log","simple log utility used by x-x.io x-components, produces a daily json log"],"value":1},
+{"key":["x-x","x-select","selecting items from JSON using an extended json select language used by x-x.io x-components"],"value":1}
+]};
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<!--header>x-x.io</header-->
+			<!--nav>
+				<a href="#">NAV</a>
+				<a href="#">NAV</a>
+				<a href="#">NAV</a>
+				<a href="#">NAV</a>
+			</nav-->
+			<section id="content">
+				<article>
+					<div>
+						<pre>
+       ________
+      /       /\______
+     /_______/  \    /\_____
+     \       \   \  /  \___/\__
+      \       \   \/   /   \ \/\
+       \_______\      /-,--,\  / |o
+       /       /      \-'--'/  \.
+      /       /   /\   \___/ /\/
+     /_______/   /  \  /___\/
+     \       \  /____\/
+      \_______\/
+						</pre>
+						<h2>x-x</h2>
+						<p>x-x is a collection of modules to build node.js applications</p>
+					</div>
+				</article>
+								<!--
+					<form>
+						<label>blubber</label><input type="text" value="bla" />
+					</form>
+					<button>Save</button>
+				-->
+			</section>
+		</div>
+		
+		<script>
+			var load = function(){
+				/*var script = document.createElement('script');
+				script.src = 'https://registry.npmjs.org/-/_view/byKeyword?startkey=[%22x-x%22]&endkey=[%22x-x%22,{}]&group_level=3';
+				script.async = true;
+				script.type="text/template";
+				var done=false;
+				script.onload = script.onreadystatechange = function() {
+				if (!done && (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete')) {
+					debugger;
+					done = true;
+					script.onload = script.onreadystatechange = null;
+					
+					var data = JSON.parse(script.responseText);
+
+				*/
+				var section = document.getElementById("content");
+					for(var i=0,l=data.rows.length;i<l;i++){
+						var name        = data.rows[i].key[1];
+						var description = data.rows[i].key[2];
+						var article = document.createElement('article');
+						article.innerHTML=
+							'<h2>'+name+'</h2>'+
+							'<p>'+description+'</p>';
+						section.appendChild(article);
+					}
+				/*	if (script && script.parentNode) script.parentNode.removeChild(script);
+				}
+				var head = document.getElementsByTagName('head')[0];
+				head.appendChild(script);
+				*/
+			};
+			load();
+		</script>
+	</body>
+</html>
