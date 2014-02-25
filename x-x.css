@@ -6,7 +6,7 @@ body {
     padding:0px;
 }
 
-article {
+section {
     background: #f8f8f8;
     position:relative; 
     border-top: 2px solid white;
@@ -19,7 +19,7 @@ article {
     /*box-shadow: inset 0 0 10px #cccccc;*/
 }
 
-article:before, article:after
+section:before, section:after
 {
 	content:"";
     position:absolute;
@@ -127,7 +127,7 @@ button {
         padding:8px;
     }
     
-    article:nth-child(odd) {
+    section:nth-child(odd) {
     /*    -webkit-flex-direction: row;*/
     }
     
@@ -154,7 +154,7 @@ button {
         -webkit-justify-content: space-between;
     }
     
-    article {
+    section {
         display: -webkit-flex;
         -webkit-justify-content: start;
         -webkit-flex-direction: column;
@@ -181,13 +181,13 @@ button {
         padding-top: 120px;
     }
     
-    section {
+    .content {
         display: -webkit-flex;
         -webkit-flex-wrap: wrap;
         -webkit-align-items: flex-start;
     }
     
-    article {
+    section {
         width: 300px;
         margin: 10px;
     }

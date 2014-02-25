@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="x-x.css">
-		<script>
-			var data =
+<head>
+<link rel="stylesheet" type="text/css" href="x-x.css">
+<script>
+var data =
 {"rows":[
 {"key":["x-x","x-common","utilities used by x-x.io x-components"],"value":1},
 {"key":["x-x","x-configs","simple loading configuration settings depending on an environment variable NODE_ENV like development, test, production"],"value":1},
@@ -11,21 +11,21 @@
 {"key":["x-x","x-log","simple log utility used by x-x.io x-components, produces a daily json log"],"value":1},
 {"key":["x-x","x-select","selecting items from JSON using an extended json select language used by x-x.io x-components"],"value":1}
 ]};
-		</script>
-	</head>
-	<body>
-		<div class="wrapper">
-			<!--header>x-x.io</header-->
-			<!--nav>
-				<a href="#">NAV</a>
-				<a href="#">NAV</a>
-				<a href="#">NAV</a>
-				<a href="#">NAV</a>
-			</nav-->
-			<section id="content">
-				<article>
-					<div>
-						<pre>
+</script>
+</head>
+<body>
+<div class="wrapper">
+<!--header>x-x.io</header-->
+<!--nav>
+	<a href="#">NAV</a>
+	<a href="#">NAV</a>
+	<a href="#">NAV</a>
+	<a href="#">NAV</a>
+</nav-->
+<div class="content" id="content" >
+<section>
+<div>
+<pre>
        ________
       /       /\______
      /_______/  \    /\_____
@@ -37,22 +37,211 @@
      /_______/   /  \  /___\/
      \       \  /____\/
       \_______\/
-						</pre>
-						<h2>x-x</h2>
-						<p>x-x is a collection of modules to build node.js applications</p>
-					</div>
-				</article>
-								<!--
-					<form>
-						<label>blubber</label><input type="text" value="bla" />
-					</form>
-					<button>Save</button>
-				-->
-			</section>
-		</div>
-		
-		<script>
-			var load = function(){
+</pre>
+<h2>x-x</h2>
+<p>x-x is a collection of modules to build node.js applications</p>
+<ul>
+	<li>it is a <b>library</b> not a framework: So you stay in control, pick just the modules you like, combine it with things you find else where</li>
+	<li>it promotes a <b>stateless architecture</b> and thus helps to ensures scalability, speed and robustness</li>
+	<li>used just a single basic building block: <b>middlewares</b></li>
+	<li>support for proxies, templating, simple form handling and calling backends</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>Library</h2>
+<p>
+x-x is an <em>library</em> of modules and <em>not a framework</em>. With a
+framework you often must choose to use everything or nothing, as the framework manages the basic control flow and then calls you.
+With x-x <em>you</em> stay in control. Define the control flow your self and pick
+only those x-x modules as buildings blocks you like and combine them with other ones as you please.
+</p>
+</section>
+
+<section>
+<h2>Stay Stateless</h2>
+<p>
+A main architectural principle is to create a stateless server. While
+the backends may store data and are stefull, the web server inbetween should be stateless:
+</p>
+<ul>
+	<li>All information to answer a request is reconstructed from the
+	request itself: the verb, url, parameters, body and headers</li>
+	<li>We do not require single global session. One <em>can</em> however use
+	<em>web caching</em> and <em>cookies</em> to improve the speed. But
+	these must always be <em>optional</em>, thus the functional behavior
+	stays the same with or without cache</li>
+	<li>Use <em>always</em> Vary-Headers to indicate which headers of
+	the incoming request determined the response and use cache control headers to indicate how
+	long the resource can be cached.</li>
+	<li>Follow the REST principles and understand <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">HTTP GET/POST/PUT/DELETE</a></li>
+</ul>
+<p>Why?</p>
+<ul>
+	<li><b>Scalability</b><p>By keeping a system stateless it scales
+	better: A load balancer can send a request to <em>any</em> of the
+	set of balanced servers, no cookie stickiness needed. The cookie
+	value is not just meaningful for a single server as with a single
+	session. Even in a cluster with shared session data, <em>every</em> session cookie based
+	request results in an overhead. In a stateless system one can
+	switch on or off nodes immediately. There are no issues for users
+	with lost sessions or timeouts.</p>
+	</li>
+	<li><b>Speed</b> by caching: <p>A global session cookie makes it
+	difficult and often impossible to cache request results: It is not
+	obvious from the request itself if a particular request will change
+	the session state or not, thereby you can only decide to not cache
+	the page. Example: think of a shopping page that shows products p.e. smartphones as result of a product search.
+	Assume the product search allows the user to optionally define some filter criteria. p.e. a price range.
+	If the filter criteria is stored in a session, then each request
+	will require a session cookie to enable the server to deliver only those products within
+	the price range.
+	But with this statefull design it is impossible to see from the
+	outside if the request GET /search?q=iphone  depends on filter criteria or not.
+	Therefore we can <em>never</em> cache the result in a HTTP cache. Each
+	request <em>must</em> go through the web server, only the server
+	knows what is in the global session. 
+	Thus even if it is likely that hunderd thousands of people just
+	search for "iphone" without using any filter criteria we can not
+	deliver a cached result.
+	</p><p>
+	Such a design often also limits indexing by search engines.
+	</p>
+	<p>The correct way of handling this, is to not require a session cookie at all, and to add the filter criteria in each request as a parameter.
+	<em>Always pass only the state needed to answer the request an
+	nothing more, and indicate what was used (Vary-headers, url,
+	method).</em></p>
+	</li>
+
+	<li><b>Testability</b>:<p>A single global session leads to systems
+	where you need to perform whole series of requests in a certain
+	order to create a state as test precondition. In a stateless system
+	a <em>single</em> request (p.e. from a command line) always will return the same response. 
+	So besides getting maybe a login credential only a <em>single</em>
+	HTTP call is needed to check if something is working or not.</p>
+	</li>
+
+	<li><b>Robustness</b>:<p>Removing cookies or shutting down a server
+	side cache does maybe effect the speed but does not cause the system to stop working.
+	Stateless servers have a better failover capability: A failing node
+	behind the load balancer can immediately be replaced without any
+	interruption by another node.</p>
+	</li>
+
+	<li><b>User satisfaction</b>:<p>Scalable cachable systems can improve the
+	response times significantly. The risk ot traffic peaks and thereby slow
+	a service leading to a bad image and lost sales is reduced. There
+	are less lost shopping baskets because the mobile connection was broken for while.
+	No lost sessions on server failover or restarts.</p></li>
+
+</ul>
+<p>Inferior frameworks often hide al this &quot;uncomfortable&quot; caching
+	scaling stateless stuff from the developers. So they can focus on
+	the &quot;important&quot; stuff. It so much easier to dump everything in the global session.
+	You often then hear: &quot;I thought the framework should handle
+	that. Why is caching so important anyway. Caching is just
+	optimising. We simply buy more hardware instead of spending
+	&quot;valuable&quot; time on this.
+	We should concentrate on business functionality&quot; that is value.
+	We can put in a cache in the backend lateron.
+</p>
+<p>
+	Ignoring the effect of scaling and web caching however is a very major failure which only low traffic web sites can afford:
+	Example: Assume the likely effect that a web cache speeds up a HTTP request from
+	p.e. 1.5 sec to p.e. 150 ms. During development without any caching and using
+	mocks the developer will never “feel” a big difference. Ignore
+	caching from the begining and the developer is very likely to break the scaling and
+	caching capabilities of a website.
+	Caching could however could have allowed the run the website <b>10 times</b> faster or run the server
+	with <b>10 times more users</b> or may be just save <b>90%</b> of the current hardware costs.
+	While this mayby are just missed oportunities you do not really miss,
+	breaking cachability can also mean significant losses:
+	On a traffic peak caused by a release date, ad campaign, press
+	release (p.e. a new iphone), it can be very very difficult to setup suddenly 10 times as much
+hardware in case the design failure caused that you <em>can not
+	cache</em> at all, and you can't fix it. This leads to real lost
+sales.
+</p><p>
+Thus Instead of ignoring the basic architectural principles which
+allowed the web to scale, a so called &quot;web&quot;-developer should better try to learn the web basics instead of hiding behind a framework.
+</p>
+
+<p>
+Note: x-x does <em>not ensure</em> you get such scalable websites, but as it
+is build around basic HTTP request/response handling it may lead to a better HTTP awareness.
+At least it doesn’t get in your way, making it impossible to handle a
+HTTP request the way you want.
+</p>
+</section>
+
+<section>
+<h2>Composing middlewares to pipelines</h2>
+<p>
+Applications are build as pipelines consisting of express middleware modules. We use the middleware as the main element to compose applications.
+</p>
+<p>
+A HTTP request comes in and routing based on the url decides the
+pipeline to use, in the pipeline we then do the following:
+</p>
+<ul>
+	<li>Check some headers</li>
+	<li>Check if an authorisation is needed</li>
+	<li>Call a backend to check the user credentials</li>
+	<li>Get some user specific data from backends</li>
+	<li>If it is a POST/PUT Request:
+		<ul>
+			<li>Check requirements to create/modify the resource</li>
+			<li>Validate the requested input/changes</li>
+			<li>If that validation fails, render a response with feedback and
+			return that to the client.</li>
+ 		<li>Call backends to create a resource or retrieve the source, change it, and store it</li>
+		</ul>	
+	</li>
+	<li>Get some requested resource data from backends</li>
+	<li>Render a representation p.e HTML or JSON or perform a redirect</li>
+	<li>Format compress the response</li>
+	<li>Set some cache control headers</li>
+	<li>Send the response to the client</li>
+</ul>
+<p>
+All these steps can be defined as asynchronous middlewares. 
+By using a middleware as the basic building block with a uniform interface, it becomes easy to mix functionalities and prevent the so called call back hell.
+</p>
+</section>
+
+<section>
+<h2>Module categories</h2>
+<p>
+we provide different categories of modules:
+</p>
+<ul>
+	<li><b>x-util</b>: a x-util module provides some kind of basic
+	functionality as normally found in libraries</li>
+
+	<li><b>x-middlewares</b>: a collection of express middleware which often
+	provide functionality provided by the x-util modules as middlewares.
+	Data is passed from one middleware to the next via the properties of
+	the request or data object.</li>
+
+	<li><b>x-app</b>: here we have some little apps to demonstrate the use of
+	the middlewares.</li>
+
+	<li><b>x-server</b>: contains some helpers to manage a set of apps together
+	on a server, run them in production mode with the clusterize
+	module.</li>
+</ul>
+</section>
+<!--
+	<form>
+	<label>blubber</label><input type="text" value="bla" />
+	</form>
+	<button>Save</button>
+-->
+</div>
+</div>
+<script>
+	var load = function(){
 				/*var script = document.createElement('script');
 				script.src = 'https://registry.npmjs.org/-/_view/byKeyword?startkey=[%22x-x%22]&endkey=[%22x-x%22,{}]&group_level=3';
 				script.async = true;
@@ -67,15 +256,15 @@
 					var data = JSON.parse(script.responseText);
 
 				*/
-				var section = document.getElementById("content");
+				var content = document.getElementById("content");
 					for(var i=0,l=data.rows.length;i<l;i++){
 						var name        = data.rows[i].key[1];
 						var description = data.rows[i].key[2];
-						var article = document.createElement('article');
-						article.innerHTML=
-							'<h2>'+name+'</h2>'+
+						var el = document.createElement('section');
+						el.innerHTML= 
+							'<h2>x-util/'+name+'</h2>'+
 							'<p>'+description+'</p>';
-						section.appendChild(article);
+						content.appendChild(el);
 					}
 				/*	if (script && script.parentNode) script.parentNode.removeChild(script);
 				}
@@ -84,6 +273,6 @@
 				*/
 			};
 			load();
-		</script>
-	</body>
+</script>
+</body>
 </html>
